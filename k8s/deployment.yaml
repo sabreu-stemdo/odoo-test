@@ -17,7 +17,8 @@ spec:
     spec:
       containers:
         - name: odoo
-          image: odoo:17
+          imagePullPolicy: Always
+          image: sebasnaa/custom_odo:17
           ports:
             - containerPort: 8069
           env:
