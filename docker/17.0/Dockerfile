@@ -1,21 +1,3 @@
-# FROM odoo:17
-# MAINTAINER Odoo S.A. <sabreu@stemdo.io>
-
-# SHELL ["/bin/bash", "-xo", "pipefail", "-c"]
-
-# # Generate locale C.UTF-8 for postgres and general locale data
-# ENV LANG en_US.UTF-8
-
-# # ENV PASSWORD "pifgdjr44"
-
-# COPY ./odoo.conf /etc/odoo/
-
-# COPY ./entrypoint.sh /
-
-
-# # ENTRYPOINT ["/entrypoint.sh"]
-# # CMD ["odoo"]
-
 # Partir de la imagen creada con el Dockerfile anterior (reemplaza con el nombre y la etiqueta correctos)
 FROM odoo:17
 
@@ -34,5 +16,10 @@ ENV ODOO_RC /stemdo/odoo/odoo.conf
 # COPY modulos /mnt/extra-addons
 
 
+# Eliminar el directorio /var/lib/odoo si existe y crear un enlace simbólico a /stemdo/odoo
+RUN rm -rf /var/lib/odoo && ln -s /stemdo/odoo /var/lib/odoo
+
 # Definir el usuario predeterminado como `odoo` y mantener el ENTRYPOINT original
 USER odoo
+
+
