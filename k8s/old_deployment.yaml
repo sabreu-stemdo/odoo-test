@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: odoo
+  namespace: odoo
+  labels:
+    app: odoo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: odoo
+  template:
+    metadata:
+      labels:
+        app: odoo
+    spec:
+      containers:
+        - name: odoo
+          imagePullPolicy: Always
+          image: sebasnaa/custom_odo:17
+          ports:
+            - containerPort: 8069
+          env:
+            - name: HOST
+              value: "postgre-postgresql.postgre.svc.cluster.local"
+            - name: USER
+              value: "odoo_user"
+            - name: PASSWORD
+              value: "pifgdjr44"
+          volumeMounts:
+            - mountPath: /stemdo/odoo  # Punto de montaje dentro del contenedor
+              name: odoo-storage
+      volumes:
+        - name: odoo-storage
+          persistentVolumeClaim:
+            claimName: odoo-pvc              

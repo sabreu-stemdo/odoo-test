@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: odoo
+  namespace: odoo
+  labels:
+    app: odoo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: odoo
+  template:
+    metadata:
+      labels:
+        app: odoo
+    spec:
+      containers:
+        - name: odoo
+          imagePullPolicy: Always
+          # image: odoo:17.0
+          image: sebasnaa/custom_odo:17.2
+          ports:
+            - containerPort: 8069
+          envFrom:
+            - configMapRef:
+                name: odoo-db-config
+          args: ["--log-level=info", "--db-filter=.*"]
+          volumeMounts:
+            - mountPath: /var/lib/odoo
+              name: odoo
+            - mountPath: /etc/odoo/odoo.conf   # Montar odoo.conf en /etc/odoo
+              subPath: odoo.conf
+              name: odoo-config-volume         # Nombre del volumen para odoo.conf
+      initContainers:
+        - name: odoo-permissions
+          image: debian:bullseye-slim
+          command: ['chown', "101:101", "-R", "/var/lib/odoo"]
+          volumeMounts:
+            - mountPath: /var/lib/odoo
+              name: odoo
+      volumes:
+        - name: odoo
+          persistentVolumeClaim:
+            claimName: odoo-pv-claim
+        - name: odoo-config-volume             # Definición del volumen para odoo.conf
+          configMap:
+            name: odoo-config                  # Nombre del ConfigMap creado para odoo.conf

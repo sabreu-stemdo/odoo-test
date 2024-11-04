@@ -5,3 +5,4 @@ CREATE DATABASE test_odoo;
 REVOKE ALL PRIVILEGES ON DATABASE test_odoo FROM PUBLIC;
 GRANT ALL PRIVILEGES ON DATABASE test_odoo TO odoo_user;
 
+docker buildx build --platform linux/arm64 -t sebasnaa/custom_odo:17-0 --push .
