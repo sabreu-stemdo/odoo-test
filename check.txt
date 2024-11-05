@@ -1,0 +1,1 @@
+https://github.com/GrupoYACCK/odoo-kubernetes/tree/master

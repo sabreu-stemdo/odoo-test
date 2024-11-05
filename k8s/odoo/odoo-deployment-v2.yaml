@@ -19,19 +19,19 @@ spec:
         - name: odoo
           imagePullPolicy: Always
           # image: odoo:17.0
-          image: sebasnaa/custom_odo:17.2
+          # image: sebasnaa/custom_odo:17
+          image: sebasnaa/custom_odo:stemdo17
           ports:
             - containerPort: 8069
           envFrom:
             - configMapRef:
                 name: odoo-db-config
-          args: ["--log-level=info", "--db-filter=.*"]
           volumeMounts:
             - mountPath: /var/lib/odoo
               name: odoo
-            - mountPath: /etc/odoo/odoo.conf   # Montar odoo.conf en /etc/odoo
+            - mountPath: /etc/odoo/odoo.conf
               subPath: odoo.conf
-              name: odoo-config-volume         # Nombre del volumen para odoo.conf
+              name: odoo-config-volume      
       initContainers:
         - name: odoo-permissions
           image: debian:bullseye-slim
@@ -43,6 +43,6 @@ spec:
         - name: odoo
           persistentVolumeClaim:
             claimName: odoo-pv-claim
-        - name: odoo-config-volume             # Definición del volumen para odoo.conf
+        - name: odoo-config-volume
           configMap:
-            name: odoo-config                  # Nombre del ConfigMap creado para odoo.conf
+            name: odoo-config
