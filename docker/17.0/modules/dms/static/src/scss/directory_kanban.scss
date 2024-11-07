@@ -8,6 +8,10 @@
 
 $o-kanban-image-width: 80px;
 
+.o_search_panel {
+    width: var(--SearchPanel-width, 300px) !important;
+}
+
 .mk_directory_kanban_view {
     span.total_items {
         margin-left: 3px;

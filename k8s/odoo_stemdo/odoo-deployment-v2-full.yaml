@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: odoo_stemdo
+  namespace: odoo-community
+  labels:
+    app: odoo
+    app.kubernetes.io/instance: odoo
+    app.kubernetes.io/name: odoo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: odoo
+      app.kubernetes.io/instance: odoo
+      app.kubernetes.io/name: odoo
+  template:
+    metadata:
+      labels:
+        app: odoo
+        app.kubernetes.io/instance: odoo
+        app.kubernetes.io/name: odoo
+    spec:
+      containers:
+        - name: odoo
+          imagePullPolicy: Always
+          image: sebasnaa/custom_odo:stemdogg17
+          ports:
+            - name: http
+              containerPort: 8069
+              protocol: TCP
+          envFrom:
+            - configMapRef:
+                name: odoo-db-config
+          volumeMounts:
+            # - mountPath: /var/lib/odoo
+            #   name: odoo
+            - mountPath: /etc/odoo/odoo.conf
+              subPath: odoo.conf
+              name: odoo-config-volume      
+      # initContainers:
+      #   - name: odoo-permissions
+      #     image: debian:bullseye-slim
+      #     command: ['chown', "101:101", "-R", "/var/lib/odoo"]
+      #     volumeMounts:
+      #       - mountPath: /var/lib/odoo
+      #         name: odoo
+      volumes:
+        # - name: odoo
+        #   persistentVolumeClaim:
+        #     claimName: odoo-pv-claim
+        - name: odoo-config-volume
+          configMap:
+            name: odoo-config

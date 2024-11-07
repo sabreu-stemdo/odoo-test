@@ -17,6 +17,8 @@ from odoo.exceptions import UserError, ValidationError
 from odoo.osv import expression
 from odoo.tools import consteq, human_size
 from odoo.tools.mimetypes import guess_mimetype
+import mimetypes
+import os
 
 from ..tools import file
 
@@ -429,12 +431,19 @@ class DMSFile(models.Model):
                 }
             )
 
-    @api.depends("name", "mimetype", "content")
+    @api.depends('mimetype', 'name')
     def _compute_extension(self):
         for record in self:
-            record.extension = file.guess_extension(
-                record.name, record.mimetype, record.content
-            )
+            if self.env.context.get('no_compute_extension'):
+                continue
+            if record.mimetype:
+                extension = mimetypes.guess_extension(record.mimetype)
+                record.extension = extension[1:].lower() if extension else ''
+            elif record.name:
+                _, extension = os.path.splitext(record.name)
+                record.extension = extension.lower().lstrip('.') if extension else ''
+            else:
+                record.extension = ''
 
     @api.depends("content")
     def _compute_mimetype(self):

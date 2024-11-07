@@ -1,0 +1,14 @@
+{{- if .Values.odooConfig.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.odooConfig.name }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: {{ .Chart.Name }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/name: {{ .Chart.Name }}
+data:
+  odoo.conf: |
+{{ .Values.odooConfig.data["odoo.conf"] | indent 4 }}
+{{- end }}

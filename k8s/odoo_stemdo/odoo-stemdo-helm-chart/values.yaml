@@ -1,0 +1,48 @@
+replicaCount: 1
+
+image:
+  repository: sebasnaa/custom_odo
+  tag: stemdogg17
+  pullPolicy: Always
+
+service:
+  type: ClusterIP
+  port: 80
+
+secret:
+  enabled: true
+  name: odoo-db-secret
+  data:
+    HOST: "your-host-value"      # Reemplaza con tu valor real
+    USER: "your-user-value"      # Reemplaza con tu valor real
+    PASSWORD: "your-password-value"  # Reemplaza con tu valor real
+
+
+odooConfig:
+  enabled: true
+  name: odoo-config
+  data:
+    odoo.conf: |
+      [options]
+      admin_passwd = admin
+      list_db = True
+      dbfilter = .*
+      log_level = info
+      addons_path = /mnt/extra-addons
+      data_dir = /var/lib/odoo
+
+resources: {}
+
+
+ingress:
+  enabled: true
+  ingressClassName: nginx
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    kubernetes.io/ingress.class: nginx
+  hostname: odoo-dev.stemdo.io
+  path: /
+  tls:
+    - secretName: odoo-stemdo-tls
+      hosts:
+        - odoo-dev.stemdo.io
